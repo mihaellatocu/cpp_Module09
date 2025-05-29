@@ -9,10 +9,4 @@ public:
     ~BitcoinExchange();
 };
 
-BitcoinExchange::BitcoinExchange(int file)
-{
-}
 
-BitcoinExchange::~BitcoinExchange()
-{
-}
