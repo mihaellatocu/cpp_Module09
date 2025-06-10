@@ -5,11 +5,10 @@ int main(int argc, char* argv[])
 {
     if (argc != 2)
     {
-        std::cerr << "Error, the file is missing or couldn't be opened.\n";
+        std::cerr << "Error, could not open file.\n";
         return (1);
-
     }
     BitcoinExchange btc("data.csv");
-    // btc.processing(argv[1]);
+    btc.processInput(argv[1]); // input.txt
     return (0);
 }
