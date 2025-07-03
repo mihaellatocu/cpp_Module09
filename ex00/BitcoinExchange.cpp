@@ -140,18 +140,18 @@ void BitcoinExchange::processInput(const std::string& inputFile)
 		// Caută cursul BTC pentru data respectivă sau cea mai apropiată anterioară
 		std::map<std::string, float>::iterator it;
 		it = _database.lower_bound(date_); // cauta data exacta sau urmatoarea mai mare
-		if (it == _database.end() || it->first != date_)
-		{
-			//daca nu gas dacta exacta cautam data anterioara
-			{
-				if(it == _database.begin())
-				{
-					std::cerr << "Error: no earlier date available in database." << std::endl;
-					continue;
-				}
-				--it;
-			}
-		}
+        
+        if ((*it).first != date_ || it == _database.end())
+        {
+            if (it == _database.begin())
+            {
+                std::cerr << "Error: no earlier date available in database." << std::endl;
+				continue;
+            }
+            --it;
+        }
+        //std::cout << "Data este:        " << (*it).first << std::endl;
+	
 		//Afisam res calculului
 		std::cout << date_ << ": => " << value << " = "
 			<< std::fixed << std::setprecision(2) << (value * it->second) << std::endl;
