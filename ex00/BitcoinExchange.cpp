@@ -21,11 +21,7 @@ void BitcoinExchange::loadDatabase(const std::string& filename)
 		return ;
 	}
 	std::getline(file, line); // skip first line 
-	// while(std::getline(file, line))
-	// {
-	// 	++i;
-	// 	std::cout << i << " - " <<  line << "\n";
-	// }
+	
 	while(std::getline(file, line))
 	{
 		std::istringstream ss(line);
@@ -157,3 +153,18 @@ void BitcoinExchange::processInput(const std::string& inputFile)
 			<< std::fixed << std::setprecision(2) << (value * it->second) << std::endl;
 	}
 }
+
+/*
+
+"client %d : left"
+
+char* = client ;
+char* =  : left:
+
+str = itoa(5)
+
+sprintf(str*, "client %d : left", 5)
+
+
+
+*/
