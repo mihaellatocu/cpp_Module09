@@ -74,13 +74,14 @@ bool BitcoinExchange::isValidValue(const std::string& valueStr, float& value) co
 {
 	std::istringstream ss(valueStr);
 	ss >> value; // for int float etc
-	
-	if (ss.fail() || !ss.eof())
-		return false;
-		
-	if (value < 0.0f || value > 1000.0f) 
-		return false;
-	
+	// std::cout << "value " << value << std::endl;
+	if (valueStr.empty() || ss.fail() || !ss.eof())
+		return (std::cerr << "Error: no value provided." << std::endl, false);
+	if (value < 0.0f)
+		return (std::cerr << "Error: not a positive number." << std::endl, false);
+    else if (value > 1000.0f)
+	   return (std::cerr << "Error: number too large." << std::endl, false);
+   
 	return true;
 }
 
@@ -94,7 +95,6 @@ void BitcoinExchange::processInput(const std::string& inputFile)
 		std::cerr << "Error: could not open file.\n";
 		return;
 	}
-	
 
 	std::getline(file, line); // skip title
 
@@ -116,7 +116,6 @@ void BitcoinExchange::processInput(const std::string& inputFile)
 		date_.erase(date_.find_last_not_of(" \t") + 1);
 		valueStr.erase(0, valueStr.find_first_not_of(" \t"));
 		valueStr.erase(valueStr.find_last_not_of(" \t") + 1);
-
 		
 		if(!isValidDate(date_))
 		{
@@ -126,13 +125,7 @@ void BitcoinExchange::processInput(const std::string& inputFile)
 		// to remove spaces in lines
 		float value;
 		if (!isValidValue(valueStr, value))
-		{
-			if (value < 0)
-				 std::cerr << "Error: not a positive number." << std::endl;
-			else
-				std::cerr << "Error: too large a number." << std::endl;
 			continue;
-		}
 		// Caută cursul BTC pentru data respectivă sau cea mai apropiată anterioară
 		std::map<std::string, float>::iterator it;
 		it = _database.lower_bound(date_); // cauta data exacta sau urmatoarea mai mare
@@ -145,26 +138,9 @@ void BitcoinExchange::processInput(const std::string& inputFile)
 				continue;
             }
             --it;
-        }
-        //std::cout << "Data este:        " << (*it).first << std::endl;
-	
-		//Afisam res calculului
+        }	
 		std::cout << date_ << ": => " << value << " = "
 			<< std::fixed << std::setprecision(2) << (value * it->second) << std::endl;
 	}
 }
 
-/*
-
-"client %d : left"
-
-char* = client ;
-char* =  : left:
-
-str = itoa(5)
-
-sprintf(str*, "client %d : left", 5)
-
-
-
-*/
