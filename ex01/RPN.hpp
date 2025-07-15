@@ -4,6 +4,7 @@
 #include <sstream>
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdint.h>
 
 class RPN
 {
@@ -11,7 +12,7 @@ private:
     std::stack<int> s;
     int total;
 
-    int doMath(int a, int b, char op);
+    long long doMath(int a, int b, char op);
     
 public:
     RPN(const std::string& ag); // it needs to be const?

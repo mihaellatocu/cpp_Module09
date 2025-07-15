@@ -23,16 +23,16 @@ bool issign(char sign)
     return false;
 }
 
-int RPN::doMath(int a, int b, char op)
+long long RPN::doMath(int a, int b, char op)
 {
     if (op == '-')
-        return (a - b);
+        return (static_cast<long long>(a) - b);
     else if (op == '*')
-        return (a * b);
+        return (static_cast<long long>(a) * b);
     else if (op == '/')
-        return (a / b);
+        return (static_cast<long long>(a) / b);
     else
-        return (a + b);
+        return (static_cast<long long>(a) + b);
 }
 
 RPN::RPN(const std::string& ag)
@@ -68,9 +68,14 @@ RPN::RPN(const std::string& ag)
                 std::cerr << "Error: The divizion to 0 is not valid.\n";
                 return ;
             }
-            int c = doMath(b, a, ag[i]);
-            std::cout << " c is: " << c << std::endl;;
-            s.push(c);
+            long long c = doMath(b, a, ag[i]);
+            std::cout << " c is: " << c << std::endl;
+            if (c > INT32_MAX || c < INT32_MIN)
+            {
+                std::cerr << "Error: overflow.\n";
+                return ;
+            }
+            s.push(static_cast<int>(c));
         }
         else if (ag[i] != ' ' && ag[i] != '\t')
         {    
@@ -81,7 +86,7 @@ RPN::RPN(const std::string& ag)
     }
     if(s.size() > 1)
     {
-        std::cerr << "Error: the values are not valissssssssd.\n";
+        std::cerr << "Error: the values are not valid.\n";
         return;
     }
     else if(s.size() == 1)
