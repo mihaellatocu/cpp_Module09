@@ -11,9 +11,8 @@ int main(int ac, char* argv[])
 	{
 		PmergeMe sorting(ac, argv);
 		sorting.printStackV();
-		sorting.printStackD();
+		// sorting.printStackD();
 		sorting.run();
-		
 	}
 	catch(const std::exception& e)
 	{

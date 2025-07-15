@@ -1,42 +1,37 @@
 #include "PmergeMe.hpp"
 
-PmergeMe::PmergeMe(const PmergeMe& other) : v(other.v), d(other.d) {}
-PmergeMe& PmergeMe::operator=(const PmergeMe& other)
-{
-    if (this != &other)
-    {
-        v = other.v;
-        d = other.d;
-    }
-    return *this;
-}
-
 void PmergeMe::printStackV()
 {
-	std::cout <<"Before: ";
+	std::cout <<"List of vectors: ";
 	std::vector<int>::iterator it;
 	for (it = v.begin(); it != v.end(); it++)
+	{
 		std::cout << *it << " ";
+	}
 	std::cout <<std::endl;
 }
 
 void PmergeMe::printStackD()
 {
-	std::cout <<"Before: ";
+	std::cout <<"List of deques: ";
 	std::deque<int>::iterator it;
 	for (it = d.begin(); it != d.end(); it++)
+	{
 		std::cout << *it << " ";
+	}
 	std::cout <<std::endl;
 }
 
 template <typename Container>
 void PmergeMe::printContainer(const Container& c) const
 {
-	std::cout << B "After:  ";
+	std::cout <<"List of elements from container: ";
 	typename Container::const_iterator it;
 	for (it = c.begin(); it != c.end(); it++)
+	{
 		std::cout << *it << " ";
-	std::cout << RST << std::endl;
+	}
+	std::cout <<std::endl;
 }
 
 PmergeMe::PmergeMe(int ac, char** av)
@@ -55,8 +50,8 @@ PmergeMe::PmergeMe(int ac, char** av)
 		if (nr < 0 || nr > INT32_MAX)
 			throw std::out_of_range("Input out of range: " + str);
 
-		// if (!seen.insert(nr).second) // return true or false - if duplicate throw an error 
-		// 	throw std::runtime_error("Duplicate argument " + str); 
+		// if (!seen.insert(nr).second) // return true or false 
+		// 	throw std::runtime_error("Duplicate argument " + str); // to be commented
 		//or
 		if (seen.insert(nr).second)
 		{
@@ -70,25 +65,32 @@ PmergeMe::~PmergeMe() {}
 
 void PmergeMe::run()
 {
-    //      PROCESS VECTOR
+	std::vector<int> vecCopy = v;
+	std::deque<int> deqCopy = d;
+
 	clock_t startVec = clock();
-	mergeInsertSortVector(v);
+	//std::cout << "start " << startVec << std::endl;
+	//sortare.
+	mergeInsertSortVector(vecCopy);
 	clock_t endVec = clock();
+	//std::cout << "end " << endVec << std::endl;
 	double vectorSortTime = static_cast<double>(endVec-startVec); // / CLOCKS_PER_SEC * 1e6; //timpul e in microsecunde
 
-	printContainer(v);
-	std::cout << "Time to process a range of " << v.size()
+	printContainer(vecCopy);
+	std::cout << "Time to process a range of " << vecCopy.size()
 			<< " elements with std::vector: " << std::fixed << std::setprecision(5)
 			<< vectorSortTime << " µs" << std::endl;
 
-    //      PROCESS DEQUE
+
 	clock_t startDeq = clock();
-	mergeInsertSortDeque(d);
+	//if(deq.size(0) > 1)
+		//mergeInsertSortDeque(deqCopy);
 	clock_t endDeq = clock();
 	double dequeSortTime = static_cast<double>(endDeq - startDeq);
 
-	printContainer(d);
-	std::cout << "Time to process a range of " << d.size()
+	// printContainer(deqCopy);
+
+	std::cout << "Time to process a range of " << deqCopy.size()
 			<< " elements with std::deque: " << std::fixed << std::setprecision(5)
 			<< dequeSortTime << " µs" << std::endl;
 }
@@ -109,8 +111,12 @@ void PmergeMe::insertion(int insertPoz, int pozGroup, int pairs, std::vector<int
 	std::vector<int> temp;	
 	for (int p = 1; p <= pairs; p++)
 		temp.push_back(vec[p + pozGroup - pairs]);
+	std::cout << "Temp vector";
+	printContainer(temp);
 	for (int i = pozGroup; i > insertPoz; i--)
+	{
 		vec[i] = vec[i - pairs];
+	}
 	for (int i = 0; i < pairs; i++)
 	{
 		vec[insertPoz - i] = temp.back();
@@ -132,7 +138,7 @@ static int checkInsertion(int pend, std::vector<int> vec, int pairs) // check wh
 
 void PmergeMe::mergeInsertSortVector(std::vector<int>& vec)
 {
-   	int level = 1;
+	int level = 1;
 	int pairs = 1;
 	while (pairs * 2 <= static_cast<int>(vec.size())) // first faze of sorting by groups
 	{
@@ -146,89 +152,36 @@ void PmergeMe::mergeInsertSortVector(std::vector<int>& vec)
 		}
 		pairs *= 2;
 		level++;
+		std::cout << "Levels " << level << " Pairs "<< pairs <<  "\n";
+		printContainer(vec);
 	}
 	
-	while (level > 2)
+	while (level > 1)
 	{
 		int poz =(vec.size() / pairs) * pairs; //poz from where we have pending remaining items
 		pairs /= 2;
-		
+		std::cout << "poz " << poz << "\n";
+		std::cout << "Remaining elements " << static_cast<int>(vec.size()) - poz  << "\n"; // 10 5 11 9 3 7 15 14 13 2 12 6 8 4 1
 		if ((static_cast<int>(vec.size()) - poz) >= pairs)
 		{
 			for (size_t i = poz + pairs - 1; i < vec.size(); i += pairs) //  pleaca de la 11 si de ver poz 7 restul de 3 elem
 			{
+				std::cout << "poz i " << i << "\n";
 				int insertPoz = checkInsertion(i, vec, pairs);
-				// std::cout << "poz of insertion " << insertPoz << std::endl;
-				insertion(insertPoz, i, pairs, vec);	
+				std::cout << "poz of insertion " << insertPoz << std::endl;
+
+				// if (vec[i] < vec[i - pairs] && vec[i] > vec[i - pairs*2]) // to be corrected
+				
+					//std::cout << vec[i] << "\n";
+					insertion(insertPoz, i, pairs, vec);
+				
 			}
 		}
+		printContainer(vec);
 		level--;
 	}
-
-    if (vec.size() <= 1)
-    return;
-    
-    std::vector<int> mainChain, pendChain;
-    for (size_t i = 0; i + 1 < vec.size(); i+= 2)
-    {
-       int a = vec[i];
-       int b = vec[i + 1];
-       if (a < b)
-       {
-        pendChain.push_back(a);
-        mainChain.push_back(b);
-       }
-       else
-       {
-        pendChain.push_back(b);
-        mainChain.push_back(a);
-       }
-    }
-    if (vec.size() % 2 != 0)
-        mainChain.push_back(vec.back());
-
-    mergeInsertSortVector(mainChain);
-
-    for (size_t i = 0; i < pendChain.size(); i++)
-    {
-        int val = pendChain[i];
-        std::vector<int>::iterator it = std::lower_bound(mainChain.begin(), mainChain.end(), val);
-        mainChain.insert(it, val);
-    }
-    vec = mainChain;
 }
+	// void PmergeMe::mergeInsertSortDeque(std::deque<int>& deqCopy)
+	// {
 
-void PmergeMe::mergeInsertSortDeque(std::deque<int>& deq)
-{
-    if (deq.size() <= 1)
-        return;
-
-    std::deque<int> mainChain, pendChain;
-    for (size_t i = 0; i + 1 < deq.size(); i+= 2)
-    {
-        int a = deq[i];
-        int b = deq[i + 1];
-        if (a < b)
-        {
-            pendChain.push_back(a);
-            mainChain.push_back(b);
-        }
-        else
-        {
-            mainChain.push_back(a);
-            pendChain.push_back(b);
-        }
-    }
-    if (deq.size() % 2 != 0)
-        mainChain.push_back(deq.back());
-
-    mergeInsertSortDeque(mainChain);
-
-    for (size_t i = 0; i < pendChain.size(); i++)
-    {
-        int val = pendChain[i];
-        std::deque<int>::iterator it = std::lower_bound(mainChain.begin(), mainChain.end(), val);
-        mainChain.insert(it, val);
-    }
-    deq = mainChain;
-}
+	// }
