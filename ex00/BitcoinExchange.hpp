@@ -19,6 +19,8 @@ private:
 
 public:
     BitcoinExchange(const std::string& databaseFile);
+    BitcoinExchange(const BitcoinExchange& other);
+	BitcoinExchange& operator=(const BitcoinExchange& other);
     void processInput(const std::string& inputFile); // read input.txt and process data
     ~BitcoinExchange();
 };

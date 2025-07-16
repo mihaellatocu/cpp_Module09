@@ -5,9 +5,19 @@ BitcoinExchange::BitcoinExchange(const std::string& databaseFile)
 	loadDatabase(databaseFile);
 }
 
-BitcoinExchange::~BitcoinExchange()
+BitcoinExchange::BitcoinExchange(const BitcoinExchange& other)
 {
+	_database = other._database;
 }
+
+BitcoinExchange& BitcoinExchange::operator=(const BitcoinExchange& other)
+{
+	if (this != &other)
+		_database = other._database;
+	return *this;
+}
+
+BitcoinExchange::~BitcoinExchange() {}
 
 void BitcoinExchange::loadDatabase(const std::string& filename)
 {
@@ -139,8 +149,7 @@ void BitcoinExchange::processInput(const std::string& inputFile)
             }
             --it;
         }	
-		std::cout << date_ << ": => " << value << " = "
-			<< std::fixed << std::setprecision(2) << (value * it->second) << std::endl;
+		std::cout << date_ << " => " << value << " = " << (value * it->second) << std::endl;
 	}
 }
 
